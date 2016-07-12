@@ -78,6 +78,7 @@ class ELFStructs(object):
         self._create_gnu_verdef()
         self._create_gnu_versym()
         self._create_note()
+        self._create_auxv()
 
     def _create_ehdr(self):
         self.Elf_Ehdr = Struct('Elf_Ehdr',
@@ -269,3 +270,16 @@ class ELFStructs(object):
             self.Elf_word('abi_minor'),
             self.Elf_word('abi_tiny'),
         )
+        
+    def _create_auxv(self):
+        # Structure Elf32_auxv_t
+        if self.elfclass == 32:
+            self.Elf_Auxv = Struct('Elf_Auxv',
+                Enum(self.Elf_word('a_type'), **ENUM_AUXV_A_TYPE),
+                self.Elf_word('a_val')
+            )
+        elif self.elfclass == 64:
+            self.Elf_Auxv = Struct('Elf_Auxv',
+                Enum(self.Elf_word64('a_type'), **ENUM_AUXV_A_TYPE),
+                self.Elf_word64('a_val')
+            )
